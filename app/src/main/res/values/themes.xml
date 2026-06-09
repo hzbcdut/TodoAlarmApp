@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        启动 Activity 阶段的主题。
+        Compose 运行时由 TodoAlarmTheme 接管色彩。
+        选 NoActionBar 避免与 Scaffold 顶部栏冲突。
+    -->
+    <style name="Theme.TodoAlarmApp" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

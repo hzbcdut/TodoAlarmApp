@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App 元信息 -->
+    <string name="app_name">TodoAlarmApp</string>
+
+    <!-- 主屏 -->
+    <string name="title_main">Todo &amp; Alarm</string>
+    <string name="empty_title">还没有待办</string>
+    <string name="empty_hint">点击右下角 + 添加，可附带提醒时间</string>
+    <string name="cd_more">更多</string>
+    <string name="cd_add">新建待办</string>
+    <string name="cd_delete">删除</string>
+    <string name="cd_alarm_1min">1 分钟后响铃</string>
+    <string name="cd_test_notification">测试通知</string>
+
+    <!-- 新建对话框 -->
+    <string name="dialog_new_todo_title">新建待办</string>
+    <string name="field_title">标题</string>
+    <string name="field_note">备注（可选）</string>
+    <string name="btn_save">保存</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_ok">确定</string>
+    <string name="btn_clear">清除</string>
+    <string name="chip_no_reminder">不提醒</string>
+    <string name="chip_reminder_set">⏰ %1$s</string>
+
+    <!-- 闹钟设置（卡片显示） -->
+    <string name="label_reminder_at">⏰ %1$s</string>
+
+    <!-- 全屏弹窗 -->
+    <string name="alert_title">⏰ 待办提醒</string>
+    <string name="alert_loading">（加载中…）</string>
+    <string name="btn_complete">完成</string>
+    <string name="btn_snooze_10min">10 分钟后提醒</string>
+
+    <!-- 菜单 -->
+    <string name="menu_reschedule">立即全量重排</string>
+    <string name="menu_permission_check">权限检查</string>
+    <string name="menu_notification_settings">通知设置</string>
+    <string name="menu_autostart_settings">自启动设置</string>
+
+    <!-- 权限检查对话框 -->
+    <string name="guide_dialog_title">权限检查 · %1$s</string>
+    <string name="guide_status_on">已开启</string>
+    <string name="guide_status_off">未开启</string>
+    <string name="guide_status_unknown">需手动检查</string>
+    <string name="guide_status_aosp_ok">AOSP 通常无需开启</string>
+    <string name="guide_status_manual">需手动开启</string>
+    <string name="guide_btn_close">关闭</string>
+    <string name="guide_btn_goto">去设置</string>
+    <string name="guide_btn_open">打开</string>
+
+    <!-- 权限项标题 -->
+    <string name="guide_item_notification">通知权限</string>
+    <string name="guide_item_fullscreen">全屏弹窗（Android 14+）</string>
+    <string name="guide_item_battery">电池优化（加入白名单）</string>
+    <string name="guide_item_autostart">自启动（开机/后台常驻）</string>
+    <string name="guide_item_app_details">应用详情（兜底）</string>
+
+    <!-- Snackbar / Toast -->
+    <string name="snack_rescheduled">已重排 %1$d 条闹钟</string>
+    <string name="toast_notify_sent">已发送锁屏通知</string>
+    <string name="toast_alarm_1min">已设定 1 分钟后响铃</string>
+    <string name="toast_no_notification_perm">请先授予通知权限</string>
+</resources>
