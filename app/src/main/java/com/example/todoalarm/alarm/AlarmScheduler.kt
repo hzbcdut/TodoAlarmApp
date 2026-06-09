@@ -48,7 +48,7 @@ class AlarmScheduler(private val context: Context) {
      */
     fun rescheduleAll(todos: List<Todo>) {
         val now = System.currentTimeMillis()
-        todos.filter { it.alarmAt != null && it.alarmAt!! > now }
+        todos.filter { (it.alarmAt ?: 0L) > now }
             .forEach { schedule(it) }
     }
 
@@ -106,6 +106,6 @@ class AlarmScheduler(private val context: Context) {
     }
 
     companion object {
-        private const val REQ_SHOW = 0xA1A1_0001
+        private const val REQ_SHOW = 0x1A1A_0001
     }
 }
