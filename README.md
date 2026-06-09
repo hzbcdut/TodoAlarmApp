@@ -294,3 +294,53 @@ TodoAlarmApp/
 ## License
 
 示例项目，仅供学习。
+
+---
+
+## CI/CD
+
+工程已配置 **GitHub Actions** 自动构建 Debug APK。
+
+### Workflow
+
+文件：`.github/workflows/android-build.yml`
+
+**触发条件**：
+- 推送到 `main` 分支
+- 对 `main` 的 PR
+- 手动 `workflow_dispatch`
+
+**执行步骤**：
+1. Checkout 代码
+2. 装 JDK 17（Temurin）
+3. 装 Gradle 8.7（与项目 wrapper 配置一致）
+4. `./gradlew assembleDebug` 构建 Debug APK
+5. `./gradlew lintDebug` 跑 Android Lint
+6. `./gradlew testDebugUnitTest` 跑单元测试
+7. 上传产物：
+   - `app-debug` — APK（30 天）
+   - `lint-report` — Lint HTML/XML 报告
+   - `test-results` — 测试结果
+
+### 本地复现 CI
+
+```bash
+# 模拟 CI 完整流程
+./gradlew assembleDebug
+./gradlew lintDebug
+./gradlew testDebugUnitTest
+```
+
+### 下载构建产物
+
+1. 进 GitHub 仓库 → **Actions** 标签
+2. 选一个成功的运行
+3. 滚动到底部 **Artifacts**
+4. 下载 `app-debug.zip` → 解压得到 `app-debug.apk`
+
+### 后续可加
+
+- Release 签名 + 构建 release APK
+- APK 元数据校验（versionCode / size）
+- 自动 push 到内部分发平台（蒲公英 / Firebase App Distribution）
+- 多版本构建矩阵（compileSdk 33 / 34 / 35）
