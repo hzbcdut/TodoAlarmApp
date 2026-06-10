@@ -52,7 +52,8 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.9.0")
 
     // Compose BOM 统一管理版本
-    val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
+    // 2024.09.00 起修复了 LocalLifecycleOwner 跨包问题
+    val composeBom = platform("androidx.compose:compose-bom:2024.09.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
