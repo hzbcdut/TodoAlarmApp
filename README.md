@@ -299,48 +299,66 @@ TodoAlarmApp/
 
 ## CI/CD
 
-工程已配置 **GitHub Actions** 自动构建 Debug APK。
+工程配置了两个 GitHub Actions Workflow。
 
-### Workflow
+### 1️⃣ Build — 自动构建 APK
 
 文件：`.github/workflows/android-build.yml`
 
-**触发条件**：
-- 推送到 `main` 分支
-- 对 `main` 的 PR
+**触发**：
+- 推送到 `main` / 对 `main` 的 PR
 - 手动 `workflow_dispatch`
 
-**执行步骤**：
-1. Checkout 代码
-2. 装 JDK 17（Temurin）
-3. 装 Gradle 8.7（与项目 wrapper 配置一致）
-4. `./gradlew assembleDebug` 构建 Debug APK
-5. `./gradlew lintDebug` 跑 Android Lint
-6. `./gradlew testDebugUnitTest` 跑单元测试
-7. 上传产物：
-   - `app-debug` — APK（30 天）
-   - `lint-report` — Lint HTML/XML 报告
-   - `test-results` — 测试结果
+**步骤**：Build → Lint → Unit Test → 上传产物（APK + Lint 报告 + 测试结果）
 
-### 本地复现 CI
+### 2️⃣ Smoke Test — emulator 端到端冒烟（手动触发）
+
+文件：`.github/workflows/android-smoke-test.yml`
+
+**触发**：手动 `workflow_dispatch`
+
+**为什么手动**：emulator 启动 + 测试 ≈ 10 分钟，CI 资源贵；只在需要时跑
+
+**步骤**：
+1. Build Debug APK
+2. 启动 API 31 emulator（`reactivecircus/android-emulator-runner`）
+3. 跑 `scripts/smoke-test.sh`，验证 11 项：
+   - 设备在线
+   - APK 安装
+   - 7 个关键权限已声明
+   - App 启动 < 2s
+   - 进程无 crash
+   - logcat 无 FATAL EXCEPTION
+   - TopBar / 空状态渲染
+   - 2 个通知 channel 创建成功
+   - 收集 logcat
+   - 清理
+4. 上传 `artifacts/` 截图 + UI dump + logcat
+
+### 本地跑 smoke test
 
 ```bash
-# 模拟 CI 完整流程
-./gradlew assembleDebug
-./gradlew lintDebug
-./gradlew testDebugUnitTest
+# 启动 emulator 后
+./scripts/smoke-test.sh app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### 下载构建产物
+输出示例：
+```
+✓ Device ready: Android 12 (API 31)
+✓ APK installed
+✓ Permission: android.permission.SCHEDULE_EXACT_ALARM
+...
+✓ SMOKE TEST PASSED
+```
 
-1. 进 GitHub 仓库 → **Actions** 标签
-2. 选一个成功的运行
-3. 滚动到底部 **Artifacts**
-4. 下载 `app-debug.zip` → 解压得到 `app-debug.apk`
+### GitHub Actions 使用方法
 
-### 后续可加
+1. Push 代码到 GitHub
+2. 进仓库 → **Actions** 标签
+3. 选 "Android Smoke Test" workflow
+4. 点 "Run workflow" → 选 branch → Run
+5. 完成后下载 `screenshots` artifact
 
-- Release 签名 + 构建 release APK
-- APK 元数据校验（versionCode / size）
-- 自动 push 到内部分发平台（蒲公英 / Firebase App Distribution）
-- 多版本构建矩阵（compileSdk 33 / 34 / 35）
+### 手动冒烟测试（人工）
+
+完整功能测试在 README 顶部"5 分钟快速验证"章节。UI 交互测试（添加 todo、设闹钟、点通知按钮）太脆弱不适合 CI，由人工在真机/模拟器上跑。
