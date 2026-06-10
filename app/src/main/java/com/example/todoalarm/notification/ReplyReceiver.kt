@@ -29,9 +29,15 @@ class ReplyReceiver : BroadcastReceiver() {
             return
         }
 
-        // 从 intent 中取 RemoteInput 的结果
-        val results = RemoteInput.getResultsFromIntent(intent)
-        val newNote = results?.getCharSequence(REMOTE_INPUT_KEY)?.toString()
+        // 优先：从 RemoteInput 结果取（锁屏通知 UI 输入）
+        val results = runCatching { RemoteInput.getResultsFromIntent(intent) }.getOrNull()
+        var newNote = results?.getCharSequence(REMOTE_INPUT_KEY)?.toString()
+
+        // 兜底：从普通 String extra 取（adb 测试 / 未来其他调用方）
+        if (newNote.isNullOrBlank()) {
+            newNote = intent.getStringExtra(REMOTE_INPUT_KEY)
+        }
+        Log.i(TAG, "ReplyReceiver id=$id newNote=${newNote?.take(50)}")
 
         val pending = goAsync()
         val appContext = context.applicationContext
