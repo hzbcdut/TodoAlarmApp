@@ -17,6 +17,13 @@
     <!-- 阶段 7：申请加入电池优化白名单 -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
+    <!--
+        阶段 4 修复：setAlarmClock 在 Android 12+ 内部走 setExact 路径
+        文档说"不需要"，实测某些 ROM/版本会抛 SecurityException
+        用户可在系统设置 → 闹钟和提醒 → 关闭授权
+    -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:name=".TodoAlarmApp"
         android:allowBackup="true"
