@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,6 +21,22 @@ android {
         vectorDrawables { useSupportLibrary = true }
     }
 
+    // Release 签名：从 keystore/keystore.properties 读
+    signingConfigs {
+        create("release") {
+            val ksProps = Properties().apply {
+                val f = rootProject.file("keystore/keystore.properties")
+                if (f.exists()) f.inputStream().use { load(it) }
+            }
+            if (ksProps.isNotEmpty()) {
+                storeFile = rootProject.file(ksProps.getProperty("storeFile"))
+                storePassword = ksProps.getProperty("storePassword")
+                keyAlias = ksProps.getProperty("keyAlias")
+                keyPassword = ksProps.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -26,6 +44,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
