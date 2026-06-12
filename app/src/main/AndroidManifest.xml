@@ -100,5 +100,14 @@
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
+
+        <!-- 通知被滑动删除时触发 → 停响铃服务 -->
+        <receiver
+            android:name=".notification.DismissReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.todoalarm.DISMISS" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

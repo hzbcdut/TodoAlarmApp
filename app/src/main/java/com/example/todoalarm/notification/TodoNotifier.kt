@@ -32,6 +32,7 @@ class TodoNotifier(private val context: Context) {
             .setContentIntent(openAppIntent(todo))
             .addAction(buildCompleteAction(todo))
             .addAction(buildReplyAction(todo))
+            .setDeleteIntent(dismissIntent(todo))  // 滑动删除时停响铃
 
         if (canPostNotifications()) {
             nm.notify(todo.id.toInt(), builder.build())
@@ -56,6 +57,7 @@ class TodoNotifier(private val context: Context) {
             .setContentIntent(openAppIntent(todo))
             // 不带 Action —— 锁屏上让用户直接进入全屏 Activity 操作
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setDeleteIntent(dismissIntent(todo))  // 滑动删除时停响铃
 
         if (canPostNotifications()) {
             nm.notify(todo.id.toInt(), builder.build())
@@ -138,6 +140,23 @@ class TodoNotifier(private val context: Context) {
         )
         return NotificationCompat.Action.Builder(R.drawable.ic_todo, "备注", pi)
             .addRemoteInput(remoteInput).build()
+    }
+
+    /**
+     * 通知被滑动删除时触发的 DeleteIntent。
+     * 调 [DismissReceiver] 停响铃服务，**不**标记 todo 完成。
+     */
+    private fun dismissIntent(todo: Todo): PendingIntent {
+        val intent = Intent(context, DismissReceiver::class.java).apply {
+            action = DismissReceiver.ACTION_DISMISS
+            putExtra(DismissReceiver.EXTRA_TODO_ID, todo.id)
+        }
+        return PendingIntent.getBroadcast(
+            context,
+            todo.id.toInt() + 2_000_000,  // 与其他 reqCode 错开
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun canPostNotifications(): Boolean =
