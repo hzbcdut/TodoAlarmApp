@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.todoalarm.R
 import com.example.todoalarm.alarm.AlarmScheduler
 import com.example.todoalarm.data.Todo
 import com.example.todoalarm.data.TodoRepository
@@ -98,6 +99,24 @@ class TodoViewModel(
             val updated = todo.copy(alarmAt = targetTs)
             repo.update(updated)
             scheduler.schedule(updated)
+        }
+    }
+
+    /**
+     * 快捷闹铃：插入一条标题为 "{N} 分钟后提醒" 的待办，并在 N 分钟后响铃。
+     * 复用 addTodo 的「insert + schedule」原子语义；触发时间已过则由 AlarmScheduler.schedule 静默自取消。
+     */
+    fun quickAddAlarm(minutesFromNow: Int) {
+        val triggerAt = System.currentTimeMillis() + minutesFromNow * 60_000L
+        viewModelScope.launch {
+            val todo = Todo(
+                title = appContext.getString(R.string.quick_alarm_title_fmt, minutesFromNow),
+                alarmAt = triggerAt.takeIf { it > System.currentTimeMillis() }
+            )
+            val id = repo.insert(todo)
+            if (todo.alarmAt != null) {
+                scheduler.schedule(todo.copy(id = id))
+            }
         }
     }
 

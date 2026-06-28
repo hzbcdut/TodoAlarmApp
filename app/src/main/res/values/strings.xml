@@ -62,4 +62,9 @@
     <string name="toast_notify_sent">已发送锁屏通知</string>
     <string name="toast_alarm_1min">已设定 1 分钟后响铃</string>
     <string name="toast_no_notification_perm">请先授予通知权限</string>
+
+    <!-- 快捷闹铃按钮（主屏 FAB 区） -->
+    <string name="quick_alarm_label_fmt">%1$d分</string>
+    <string name="quick_alarm_title_fmt">%1$d 分钟后提醒</string>
+    <string name="snack_quick_alarm_set">已设定 %1$d 分钟后提醒</string>
 </resources>
