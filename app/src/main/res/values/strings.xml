@@ -67,4 +67,8 @@
     <string name="quick_alarm_label_fmt">%1$d分</string>
     <string name="quick_alarm_title_fmt">%1$d 分钟后提醒</string>
     <string name="snack_quick_alarm_set">已设定 %1$d 分钟后提醒</string>
+
+    <!-- 取消闹钟（卡片图标 toggle） -->
+    <string name="cd_cancel_alarm">取消闹钟</string>
+    <string name="toast_alarm_canceled">已取消闹钟</string>
 </resources>

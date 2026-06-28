@@ -121,6 +121,18 @@ class TodoViewModel(
     }
 
     /**
+     * 取消某条 todo 的闹钟（不清除 todo 本体）。
+     * alarmAt 置 null → update → scheduler.cancel。
+     */
+    fun cancelAlarm(todo: Todo) {
+        if (todo.alarmAt == null) return
+        viewModelScope.launch {
+            repo.update(todo.copy(alarmAt = null))
+            scheduler.cancel(todo.id)
+        }
+    }
+
+    /**
      * 阶段 6+：开机/启动时全量重排。
      */
     fun rescheduleAll() {

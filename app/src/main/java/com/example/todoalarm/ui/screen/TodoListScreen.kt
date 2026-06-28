@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.AlarmOff
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.NotificationsActive
@@ -199,6 +200,10 @@ fun TodoListScreen(
                 onSetAlarmIn1Min = { todo ->
                     vm.scheduleInOneMinute(todo)
                     Toast.makeText(context, R.string.toast_alarm_1min, Toast.LENGTH_SHORT).show()
+                },
+                onCancelAlarm = { todo ->
+                    vm.cancelAlarm(todo)
+                    Toast.makeText(context, R.string.toast_alarm_canceled, Toast.LENGTH_SHORT).show()
                 }
             )
         }
@@ -244,7 +249,8 @@ private fun TodoList(
     onComplete: (Long) -> Unit,
     onDelete: (Long) -> Unit,
     onNotify: (Todo) -> Unit,
-    onSetAlarmIn1Min: (Todo) -> Unit
+    onSetAlarmIn1Min: (Todo) -> Unit,
+    onCancelAlarm: (Todo) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(padding),
@@ -257,7 +263,8 @@ private fun TodoList(
                 onClick = { onComplete(todo.id) },
                 onDelete = { onDelete(todo.id) },
                 onNotify = { onNotify(todo) },
-                onSetAlarmIn1Min = { onSetAlarmIn1Min(todo) }
+                onSetAlarmIn1Min = { onSetAlarmIn1Min(todo) },
+                onCancelAlarm = { onCancelAlarm(todo) }
             )
         }
     }
@@ -269,7 +276,8 @@ private fun TodoCard(
     onClick: () -> Unit,
     onDelete: () -> Unit,
     onNotify: () -> Unit,
-    onSetAlarmIn1Min: () -> Unit
+    onSetAlarmIn1Min: () -> Unit,
+    onCancelAlarm: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -300,8 +308,19 @@ private fun TodoCard(
                     )
                 }
             }
-            IconButton(onClick = onSetAlarmIn1Min) {
-                Icon(Icons.Default.Alarm, contentDescription = stringResource(R.string.cd_alarm_1min))
+            // 闹钟图标 toggle：已设 → 显示 AlarmOff（取消）；未设 → 显示 Alarm（设 1 分钟）
+            if (todo.alarmAt != null) {
+                IconButton(onClick = onCancelAlarm) {
+                    Icon(
+                        Icons.Default.AlarmOff,
+                        contentDescription = stringResource(R.string.cd_cancel_alarm),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            } else {
+                IconButton(onClick = onSetAlarmIn1Min) {
+                    Icon(Icons.Default.Alarm, contentDescription = stringResource(R.string.cd_alarm_1min))
+                }
             }
             IconButton(onClick = onNotify) {
                 Icon(Icons.Default.NotificationsActive, contentDescription = stringResource(R.string.cd_test_notification))
