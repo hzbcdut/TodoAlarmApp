@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.todoalarm.R
+import com.example.todoalarm.alarm.AlarmRingService
 import com.example.todoalarm.alarm.AlarmScheduler
 import com.example.todoalarm.data.Todo
 import com.example.todoalarm.data.TodoRepository
@@ -74,6 +75,10 @@ class TodoViewModel(
         viewModelScope.launch {
             repo.markCompleted(id)
             scheduler.cancel(id)
+            // 卡片操作时若闹钟正在响，也要停前台服务 + 通知
+            // （scheduler.cancel 只撤 PendingIntent，不会停已启动的 AlarmRingService MediaPlayer）
+            AlarmRingService.stop(appContext)
+            TodoNotifier(appContext).cancel(id)
         }
     }
 
@@ -81,6 +86,8 @@ class TodoViewModel(
         viewModelScope.launch {
             repo.delete(id)
             scheduler.cancel(id)
+            AlarmRingService.stop(appContext)
+            TodoNotifier(appContext).cancel(id)
         }
     }
 
@@ -123,12 +130,15 @@ class TodoViewModel(
     /**
      * 取消某条 todo 的闹钟（不清除 todo 本体）。
      * alarmAt 置 null → update → scheduler.cancel。
+     * 同时停 AlarmRingService 前台服务 + 清通知（若正在响），否则 MediaPlayer + 通知都会残留。
      */
     fun cancelAlarm(todo: Todo) {
         if (todo.alarmAt == null) return
         viewModelScope.launch {
             repo.update(todo.copy(alarmAt = null))
             scheduler.cancel(todo.id)
+            AlarmRingService.stop(appContext)
+            TodoNotifier(appContext).cancel(todo.id)
         }
     }
 
